@@ -15,10 +15,9 @@ DROP TABLE IF EXISTS matches CASCADE;
 
 -- id, name
 CREATE TABLE players (name TEXT,
-											id SERIAL );
+											id SERIAL);
 
 --id, winner, loser
 CREATE TABLE matches (id SERIAL,
 											winner smallint,
-											loser smallint
-											);
+											loser smallint);
