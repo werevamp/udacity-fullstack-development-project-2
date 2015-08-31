@@ -21,9 +21,9 @@ the following statement in the command line:
 psql -f tournament.sql
 
 
-##Run the application
+###Run the application
 
 Once the database is created you are ready to run the application. To run the
 application run the following statement in the command line.
 
-python tournment_test.py
+python tournament_test.py
