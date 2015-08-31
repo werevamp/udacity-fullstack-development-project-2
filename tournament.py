@@ -6,6 +6,7 @@ import psycopg2
 
 def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
+
     return psycopg2.connect("dbname=tournament")
 
 
@@ -70,9 +71,7 @@ def player_standings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    """
-    [(id, name, wins, matches), (id, name, wins, matches), (id, name, wins, matches)]
-    """
+
     conn = connect()
     cur = conn.cursor()
     cur.execute("\
@@ -94,7 +93,7 @@ def player_standings():
                 GROUP BY players.id\
         ) AS matches_amount\
         ON players.id = matches_amount.id\
-        ORDER BY winners.wins DESC NULLS LAST\
+        ORDER BY winners.wins DESC\
     ")
     query_results = cur.fetchall()
     conn.close()
@@ -109,9 +108,12 @@ def report_match(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+
     conn = connect()
     cur = conn.cursor()
-    cur.execute("INSERT INTO matches(winner, loser) VALUES (%s, %s)", (winner, loser,))
+    cur.execute("\
+                INSERT INTO matches(winner, loser)\
+                VALUES (%s, %s)", (winner, loser,))
     conn.commit()
     conn.close()
 
@@ -147,13 +149,18 @@ def swiss_pairings():
         ) AS matches\
         RIGHT JOIN players\
         ON players.id = matches.winner\
-        ORDER BY matches.wins DESC NULLS LAST\
+        ORDER BY matches.wins DESC\
     ")
     query_results = cur.fetchall()
     conn.close()
 
     loop_amount = len(query_results) / 2
     paired_players = []
+
+    """
+    The for loop below splits the query results into an odd and even list. It
+    will loop through both list and pairs them up one by one into tuples
+    """
     for index in range(loop_amount):
         pair = query_results[0::2][index] + query_results[1::2][index]
         paired_players.append(pair)
